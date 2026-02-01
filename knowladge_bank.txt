@@ -1,0 +1,203 @@
+Docker on Ubuntu
+
+🔍 Check where your disk went
+docker system df
+🔥 Free everything unused
+sudo docker system prune -a --volumes
+
+1️⃣ Update your system
+sudo apt update
+sudo apt upgrade -y
+
+2️⃣ Install required packages
+
+These allow apt to use HTTPS repositories:
+
+sudo apt install -y ca-certificates curl gnupg lsb-release
+
+3️⃣ Add Docker’s official GPG key
+sudo mkdir -p /etc/apt/keyrings
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+
+4️⃣ Set up the Docker repository
+echo \
+  "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
+  $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+
+5️⃣ Update apt and install Docker
+sudo apt update
+sudo apt install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+
+6️⃣ Verify Docker installation
+sudo docker --version
+sudo docker run hello-world
+
+
+
+
+hello-world runs a test container. If it prints a success message, Docker works.
+
+7️⃣ Optional: Run Docker as a non-root user
+sudo usermod -aG docker $USER
+
+
+Log out and back in for this to take effect.
+
+Then you can run docker ps without sudo.
+
+
+
+
+
+
+
+docker ps -a
+
+
+docker build -t fastapi-ml-app .
+
+docker run --rm fastapi-ml-app  # after run automatically delete container
+
+docker stop
+docker rm
+docker rm -f abc123
+
+# go inside container bash
+docker exec -it <container> /bin/bash
+
+docker compose up -d
+docker compose logs -f
+
+docker compose run	One-off container, NO rebuild
+docker compose up	Runs services
+docker compose up --build	Rebuilds image
+docker compose down	Stops & removes containers
+
+
+🔁 Fix: switch to the correct context
+
+If Docker Desktop is running:
+
+docker context use desktop-linux
+
+If system Docker:
+
+docker context use default
+
+Then:
+docker ps
+
+✅ You will see the running container.
+
+
+
+
+
+
+
+
+
+
+Що означають ваші результати YOLOv8 загалом
+🟢 “Модель успішно навчилась”
+
+Це означає:
+
+лосси зменшились
+
+learning rate майже нульовий
+
+модель більше не покращується
+➡️ навчання завершене коректно, без помилок
+
+🟢 Хороший mAP50 ≈ 0.79
+
+Це означає:
+
+у ~79% випадків модель правильно знаходить обʼєкт
+
+рамка достатньо добре перекриває обʼєкт (IoU ≥ 0.5)
+➡️ для більшості реальних задач це хороший рівень
+
+🟡 Recall ≈ 0.77
+
+Це означає:
+
+модель знаходить ~77% усіх обʼєктів
+
+~23% обʼєктів вона пропускає
+➡️ якщо важливо не пропускати обʼєкти (безпека, медицина) — це мінус
+
+🟡 Precision ≈ 0.67
+
+Це означає:
+
+серед усіх знайдених обʼєктів ~33% — помилкові
+➡️ модель іноді “бачить” те, чого нема
+
+🟡 mAP50-95 ≈ 0.61 нижчий за mAP50
+
+Це означає:
+
+модель знаходить обʼєкти, але
+
+рамки не завжди дуже точні
+
+при строгих IoU (0.75–0.95) якість падає
+➡️ для задач, де важлива точна геометрія, це слабке місце
+
+🟡 Validation loss > Train loss
+
+Це означає:
+
+модель трохи переадаптувалась під тренувальні дані
+
+але не критично
+➡️ нормальна ситуація, не “зламана”
+
+
+
+
+Gcloud---------------------------------------------------------
+
+Install gcloud
+1.
+sudo apt-get install apt-transport-https ca-certificates gnupg curl
+curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo gpg --dearmor -o /usr/share/keyrings/cloud.google.gpg
+echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt cloud-sdk main" | sudo tee -a /etc/apt/sources.list.d/google-cloud-sdk.list
+2.
+sudo apt-get update && sudo apt-get install google-cloud-cli
+
+gcloud auth login
+gcloud config set project ml-training-demo
+
+gcloud resource-manager tags values list --parent=tagKeys/28567
+
+gcloud artifacts repositories create ml-images \
+  --repository-format=docker \
+  --location=europe-west1
+
+
+gcloud builds submit \
+  --tag europe-west1-docker.pkg.dev/ml-training-demo/ml-images/pytorch-trainer:latest
+
+
+
+
+if doesnt go:
+gcloud services enable cloudbuild.googleapis.com
+
+
+gcloud projects describe ml-training-demo-486116 --format="value(projectNumber)"
+gcloud projects add-iam-policy-binding ml-training-demo-486116 \
+    --member="serviceAccount:[PROJECT_NUMBER]@cloudbuild.gserviceaccount.com" \
+    --role="roles/artifactregistry.writer"
+
+
+
+check if access:
+
+gcloud auth list
+gcloud projects describe ml-training-demo-486
+
+gcloud builds list --limit=5
