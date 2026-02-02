@@ -201,3 +201,28 @@ gcloud auth list
 gcloud projects describe ml-training-demo-486
 
 gcloud builds list --limit=5
+
+
+FIX BROKEN .VENV VSCODE
+
+touch .env
+Put this inside:
+PYTHONPATH=.
+
+
+.vscode/settings.json 
+Put this inside:
+{
+  "python.envFile": "${workspaceFolder}/.env",
+  "python.analysis.extraPaths": ["."]
+}
+
+
+
+echo "export PYTHONPATH=$(pwd)" >> ~/.bashrc
+
+Ctrl + Shift + P → Reload Window
+
+
+
+
