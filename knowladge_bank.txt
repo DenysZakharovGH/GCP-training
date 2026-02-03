@@ -232,3 +232,6 @@ gcloud compute ssh pytorch-dev --zone europe-west1-b
 
 
 
+sudo apt-get install python3-venv -y
+python3 -m venv ~/dl-env
+source ~/dl-env/bin/activate
