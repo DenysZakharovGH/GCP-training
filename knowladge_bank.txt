@@ -224,5 +224,11 @@ echo "export PYTHONPATH=$(pwd)" >> ~/.bashrc
 Ctrl + Shift + P → Reload Window
 
 
+sudo apt install -y tmux
+tmux
+tmux attach
+
+gcloud compute ssh pytorch-dev --zone europe-west1-b
+
 
 
